@@ -1,0 +1,27 @@
+name: AlarmsApp
+options:
+  bundleIdPrefix: com.hatch
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16"
+
+settings:
+  SWIFT_VERSION: "5.9"
+
+targets:
+  AlarmsApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: AlarmsApp/Sources
+    info:
+      path: AlarmsApp/Info.plist
+      properties:
+        CFBundleDisplayName: Alarms
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.hatch.AlarmsApp
+      DEVELOPMENT_TEAM: ""
