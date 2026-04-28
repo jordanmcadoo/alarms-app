@@ -9,6 +9,8 @@ final class AlarmScheduler {
 
     private var timer: Timer?
     private var player: AVAudioPlayer?
+    // Tracks (alarmId, hour, minute) to prevent re-firing within the same minute after dismissal.
+    private var firedThisMinute: Set<String> = []
 
     func start(watching store: AlarmStore) {
         timer?.invalidate()
@@ -36,14 +38,16 @@ final class AlarmScheduler {
 
         for alarm in store.alarms where alarm.isEnabled {
             let alarmComponents = Calendar.current.dateComponents([.hour, .minute], from: alarm.time)
-            if alarmComponents.hour == now.hour && alarmComponents.minute == now.minute {
-                fire(alarm: alarm)
-                return
-            }
+            guard alarmComponents.hour == now.hour, alarmComponents.minute == now.minute else { continue }
+            let key = "\(alarm.id)-\(now.hour ?? 0)-\(now.minute ?? 0)"
+            guard !firedThisMinute.contains(key) else { continue }
+            fire(alarm: alarm, key: key)
+            return
         }
     }
 
-    private func fire(alarm: Alarm) {
+    private func fire(alarm: Alarm, key: String) {
+        firedThisMinute.insert(key)
         firingAlarm = alarm
         play(sound: alarm.sound)
     }
