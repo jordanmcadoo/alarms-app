@@ -4,7 +4,6 @@ struct AlarmListView: View {
     @Environment(AlarmStore.self) var store
 
     var body: some View {
-        @Bindable var store = store
         List {
             ForEach(store.sortedAlarms) { alarm in
                 AlarmRowView(alarm: alarm)

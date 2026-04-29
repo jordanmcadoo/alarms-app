@@ -21,7 +21,7 @@ struct AlarmRowView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                Text(alarm.sound.displayName)
+                Text("\(alarm.sound.displayName) · \(alarm.recurring.displayName)")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

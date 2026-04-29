@@ -18,6 +18,7 @@ final class AlarmScheduler {
 
     func start(watching store: AlarmStore) {
         self.store = store
+        pendingAlarms.removeAll()
         tick()
         scheduleAlignedTimer()
     }
@@ -137,12 +138,11 @@ final class AlarmScheduler {
     // MARK: - Audio
 
     private func play(sound: AlarmSound) {
-        let candidates: [(String, String)] = [
-            (sound.rawValue, "mp3"),
-            (sound.rawValue, "m4a"),
-            (sound.rawValue, "wav"),
-            (sound.rawValue, "caf"),
-        ]
+        // Check both the bundle root (flat copy) and the Audio subfolder (folder reference).
+        let extensions = ["mp3", "m4a", "wav", "caf"]
+        let candidates: [(String, String)] = extensions.flatMap { ext in
+            [(sound.rawValue, ext), ("Audio/\(sound.rawValue)", ext)]
+        }
 
         for (name, ext) in candidates {
             if let url = Bundle.main.url(forResource: name, withExtension: ext) {
@@ -224,10 +224,11 @@ final class AlarmScheduler {
     private func stopSound() {
         player?.stop()
         player = nil
-        audioEngine?.stop()
+        // Detach before stop so the render callback cannot run after the engine halts.
         if let sourceNode {
             audioEngine?.detach(sourceNode)
         }
+        audioEngine?.stop()
         sourceNode = nil
         audioEngine = nil
         try? AVAudioSession.sharedInstance().setActive(false)
