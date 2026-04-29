@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		26916EF3FADDFD4E95426BC8 /* AlarmStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF47F93AE45DB06A00C2CA64 /* AlarmStore.swift */; };
 		3E1DE08F34C97AFDDDDA8265 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA460BF55A841F1344877CA /* Alarm.swift */; };
+		4314AD0675A83A8E603A373F /* white-noise.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9A703EF1DE75B4895DB5A6C0 /* white-noise.m4a */; };
+		59F84763BC2D5B6563FAD915 /* party.wav in Resources */ = {isa = PBXBuildFile; fileRef = C81B742D937B4AC75A16008C /* party.wav */; };
+		6D3F5BA3DAC80EEACDBE9220 /* brown-noise.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F40CA7DF3E09CB4394D68A0A /* brown-noise.m4a */; };
 		7BCE7E10E34DAECC6B5EE9A5 /* AddAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 510FB7FCF7C07C35147EE3BC /* AddAlarmView.swift */; };
 		97EBB53F4E5A0010B9264097 /* AlarmScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC840CCAA5CA35B7DBE2EBD /* AlarmScheduler.swift */; };
 		993AA269352D67E114F07FCE /* AlarmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117B6B5D402F5EE28788960 /* AlarmService.swift */; };
 		B5D64A981E47133D14A8C370 /* FiringAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E3698C564458D3A7D146A9 /* FiringAlarmView.swift */; };
 		C54E09EDB3212F94658B31E4 /* AlarmRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3962BDAEEEF0B41C5641A5B /* AlarmRowView.swift */; };
 		E6533FC6FEFE6A9332D84AE9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B7B67EBD282046DC8F756 /* ContentView.swift */; };
+		E6D54FDD789EF7525B81732F /* ocean.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D2A8FC99D747F5BE791A4CFB /* ocean.mp3 */; };
 		F04A606FE535CEF733C4BF93 /* AlarmListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70142D661A47C7BE1D40693 /* AlarmListView.swift */; };
 		F6260EA4930DEC4B71C7F1D5 /* AlarmsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44EC5C2A0DDCED6D4DB4431 /* AlarmsApp.swift */; };
 /* End PBXBuildFile section */
@@ -23,14 +27,18 @@
 		1BA460BF55A841F1344877CA /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
 		510FB7FCF7C07C35147EE3BC /* AddAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAlarmView.swift; sourceTree = "<group>"; };
 		71E3698C564458D3A7D146A9 /* FiringAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiringAlarmView.swift; sourceTree = "<group>"; };
+		9A703EF1DE75B4895DB5A6C0 /* white-noise.m4a */ = {isa = PBXFileReference; path = "white-noise.m4a"; sourceTree = "<group>"; };
 		A3962BDAEEEF0B41C5641A5B /* AlarmRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmRowView.swift; sourceTree = "<group>"; };
 		AFC840CCAA5CA35B7DBE2EBD /* AlarmScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmScheduler.swift; sourceTree = "<group>"; };
 		C11B7B67EBD282046DC8F756 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C44EC5C2A0DDCED6D4DB4431 /* AlarmsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmsApp.swift; sourceTree = "<group>"; };
+		C81B742D937B4AC75A16008C /* party.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = party.wav; sourceTree = "<group>"; };
 		CF47F93AE45DB06A00C2CA64 /* AlarmStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmStore.swift; sourceTree = "<group>"; };
+		D2A8FC99D747F5BE791A4CFB /* ocean.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ocean.mp3; sourceTree = "<group>"; };
 		D70142D661A47C7BE1D40693 /* AlarmListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmListView.swift; sourceTree = "<group>"; };
 		DA5B9204B6E4B34A390FAB51 /* AlarmsApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AlarmsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E117B6B5D402F5EE28788960 /* AlarmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmService.swift; sourceTree = "<group>"; };
+		F40CA7DF3E09CB4394D68A0A /* brown-noise.m4a */ = {isa = PBXFileReference; path = "brown-noise.m4a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -40,6 +48,15 @@
 				CF47F93AE45DB06A00C2CA64 /* AlarmStore.swift */,
 			);
 			path = Stores;
+			sourceTree = "<group>";
+		};
+		393C16CCDC6B9013E0940D19 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				EDB6498D45E9AA854B602A83 /* Audio */,
+			);
+			name = Assets;
+			path = AlarmsApp/Assets;
 			sourceTree = "<group>";
 		};
 		3A7846AC78E7D469D2FEACE8 /* Services */ = {
@@ -75,6 +92,7 @@
 		8C264F655165963615346A4B = {
 			isa = PBXGroup;
 			children = (
+				393C16CCDC6B9013E0940D19 /* Assets */,
 				76DE1C8D72F6803B585D1655 /* Sources */,
 				B3282D6B99159D35AF248699 /* Products */,
 			);
@@ -100,6 +118,17 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		EDB6498D45E9AA854B602A83 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F40CA7DF3E09CB4394D68A0A /* brown-noise.m4a */,
+				D2A8FC99D747F5BE791A4CFB /* ocean.mp3 */,
+				C81B742D937B4AC75A16008C /* party.wav */,
+				9A703EF1DE75B4895DB5A6C0 /* white-noise.m4a */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -108,6 +137,7 @@
 			buildConfigurationList = 05CE5A834DC547D0FBE85D5B /* Build configuration list for PBXNativeTarget "AlarmsApp" */;
 			buildPhases = (
 				01FB00369B964D849C6E5953 /* Sources */,
+				FED75C6568D27A763D614500 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -152,6 +182,20 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FED75C6568D27A763D614500 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D3F5BA3DAC80EEACDBE9220 /* brown-noise.m4a in Resources */,
+				E6D54FDD789EF7525B81732F /* ocean.mp3 in Resources */,
+				59F84763BC2D5B6563FAD915 /* party.wav in Resources */,
+				4314AD0675A83A8E603A373F /* white-noise.m4a in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		01FB00369B964D849C6E5953 /* Sources */ = {
