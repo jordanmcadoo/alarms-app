@@ -6,6 +6,7 @@ struct AddAlarmView: View {
 
     @State private var selectedTime = Date()
     @State private var selectedSound = AlarmSound.ocean
+    @State private var selectedRecurring = Recurring.oneTime
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,16 @@ struct AddAlarmView: View {
                     .pickerStyle(.inline)
                     .labelsHidden()
                 }
+
+                Section("Repeat") {
+                    Picker("Repeat", selection: $selectedRecurring) {
+                        ForEach(Recurring.allCases, id: \.self) { r in
+                            Text(r.displayName).tag(r)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
+                }
             }
             .navigationTitle("Add Alarm")
             .navigationBarTitleDisplayMode(.inline)
@@ -35,7 +46,7 @@ struct AddAlarmView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
-                        let alarm = Alarm(time: selectedTime, sound: selectedSound)
+                        let alarm = Alarm(time: selectedTime, sound: selectedSound, recurring: selectedRecurring)
                         store.add(alarm)
                         dismiss()
                     }

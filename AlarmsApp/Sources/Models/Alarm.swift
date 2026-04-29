@@ -16,13 +16,21 @@ enum AlarmSound: String, CaseIterable, Codable {
     }
 }
 
-enum Recurring: String, Codable {
+enum Recurring: String, Codable, CaseIterable {
     case oneTime = "one-time"
     case weekly = "weekly"
     case yearly = "yearly"
+
+    var displayName: String {
+        switch self {
+        case .oneTime: return "One Time"
+        case .weekly: return "Weekly"
+        case .yearly: return "Yearly"
+        }
+    }
 }
 
-struct Alarm: Identifiable {
+struct Alarm: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var time: Date
     var sound: AlarmSound
@@ -30,6 +38,12 @@ struct Alarm: Identifiable {
     var isEnabled: Bool
     /// True when fetched from the backend.
     var isSaved: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, sound, recurring
+        case time = "timestamp"
+        case isEnabled, isSaved
+    }
 
     init(
         id: UUID = UUID(),
@@ -46,16 +60,45 @@ struct Alarm: Identifiable {
         self.isEnabled = isEnabled
         self.isSaved = isSaved
     }
-}
 
-// MARK: - Backend decoding
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        time = try container.decode(Date.self, forKey: .time)
+        sound = try container.decode(AlarmSound.self, forKey: .sound)
+        recurring = try container.decode(Recurring.self, forKey: .recurring)
+        // The API has no id field — derive a stable UUID from the alarm's content
+        // so the same remote record always maps to the same id across fetches.
+        if let raw = try? container.decode(String.self, forKey: .id) {
+            id = UUID(uuidString: raw) ?? Alarm.stableUUID(from: raw)
+        } else if let intId = try? container.decode(Int.self, forKey: .id) {
+            id = Alarm.stableUUID(from: String(intId))
+        } else {
+            id = Alarm.stableUUID(from: "\(time.timeIntervalSinceReferenceDate)-\(sound.rawValue)-\(recurring.rawValue)")
+        }
+        isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
+        isSaved = try container.decodeIfPresent(Bool.self, forKey: .isSaved) ?? false
+    }
 
-struct RemoteAlarm: Decodable {
-    let timestamp: Date
-    let sound: AlarmSound
-    let recurring: Recurring
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(time, forKey: .time)
+        try container.encode(sound, forKey: .sound)
+        try container.encode(recurring, forKey: .recurring)
+        try container.encode(isEnabled, forKey: .isEnabled)
+        try container.encode(isSaved, forKey: .isSaved)
+    }
 
-    func toAlarm() -> Alarm {
-        Alarm(time: timestamp, sound: sound, recurring: recurring, isSaved: true)
+    // XOR-folds the UTF-8 bytes of `string` into 16 bytes to produce a
+    // deterministic UUID. Not cryptographic — purely for stable identity.
+    private static func stableUUID(from string: String) -> UUID {
+        var bytes = [UInt8](repeating: 0, count: 16)
+        for (i, byte) in string.utf8.enumerated() { bytes[i % 16] ^= byte }
+        return UUID(uuid: (
+            bytes[0],  bytes[1],  bytes[2],  bytes[3],
+            bytes[4],  bytes[5],  bytes[6],  bytes[7],
+            bytes[8],  bytes[9],  bytes[10], bytes[11],
+            bytes[12], bytes[13], bytes[14], bytes[15]
+        ))
     }
 }

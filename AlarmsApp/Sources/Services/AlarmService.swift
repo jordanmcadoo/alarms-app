@@ -7,7 +7,7 @@ struct AlarmService {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let (data, _) = try await URLSession.shared.data(from: endpoint)
-        let remote = try decoder.decode([RemoteAlarm].self, from: data)
-        return remote.map { $0.toAlarm() }
+        let alarms = try decoder.decode([Alarm].self, from: data)
+        return alarms.map { var a = $0; a.isSaved = true; return a }
     }
 }

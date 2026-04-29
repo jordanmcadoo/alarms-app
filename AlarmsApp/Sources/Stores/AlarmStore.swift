@@ -25,6 +25,11 @@ final class AlarmStore {
         alarms[idx].isEnabled.toggle()
     }
 
+    func disable(id: UUID) {
+        guard let idx = alarms.firstIndex(where: { $0.id == id }) else { return }
+        alarms[idx].isEnabled = false
+    }
+
     func replace(with remoteAlarms: [Alarm]) {
         let existingLocal = alarms.filter { !$0.isSaved }
         alarms = remoteAlarms + existingLocal

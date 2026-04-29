@@ -4,6 +4,7 @@ struct ContentView: View {
     @Environment(AlarmStore.self) var store
     @Environment(AlarmScheduler.self) var scheduler
     @State private var showAddAlarm = false
+    @State private var fetchErrorMessage: String? = nil
 
     var body: some View {
         NavigationStack {
@@ -31,6 +32,17 @@ struct ContentView: View {
         )) { alarm in
             FiringAlarmView(alarm: alarm)
         }
+        .alert(
+            "Failed to Load Alarms",
+            isPresented: Binding(
+                get: { fetchErrorMessage != nil },
+                set: { if !$0 { fetchErrorMessage = nil } }
+            )
+        ) {
+            Button("OK") { fetchErrorMessage = nil }
+        } message: {
+            Text(fetchErrorMessage ?? "")
+        }
     }
 
     private func loadRemoteAlarms() async {
@@ -38,7 +50,7 @@ struct ContentView: View {
             let fetched = try await AlarmService.fetchAlarms()
             store.replace(with: fetched)
         } catch {
-            print("Failed to fetch alarms: \(error)")
+            fetchErrorMessage = error.localizedDescription
         }
     }
 }

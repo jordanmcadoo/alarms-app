@@ -4,19 +4,18 @@ import AudioToolbox
 import Observation
 
 @Observable
+@MainActor
 final class AlarmScheduler {
     private(set) var firingAlarm: Alarm? = nil
 
     private var timer: Timer?
     private var player: AVAudioPlayer?
-    // Tracks (alarmId, hour, minute) to prevent re-firing within the same minute after dismissal.
-    private var firedThisMinute: Set<String> = []
+    private weak var store: AlarmStore?
 
     func start(watching store: AlarmStore) {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.tick(store: store)
-        }
+        self.store = store
+        tick()
+        scheduleAlignedTimer()
     }
 
     func stop() {
@@ -27,33 +26,63 @@ final class AlarmScheduler {
     }
 
     func dismissFiringAlarm() {
+        if let alarm = firingAlarm, alarm.recurring == .oneTime {
+            store?.disable(id: alarm.id)
+        }
         stopSound()
         firingAlarm = nil
     }
 
-    private func tick(store: AlarmStore) {
-        guard firingAlarm == nil else { return }
+    // MARK: - Timer
 
+    private func scheduleAlignedTimer() {
+        timer?.invalidate()
+        let now = Date()
+        guard let nextMinute = Calendar.current.nextDate(
+            after: now,
+            matching: DateComponents(second: 0),
+            matchingPolicy: .nextTime
+        ) else { return }
+
+        // Fire once at the next minute boundary, then repeat every 60 s.
+        let delay = nextMinute.timeIntervalSince(now)
+        timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.tick()
+                self?.startRepeatingTimer()
+            }
+        }
+    }
+
+    private func startRepeatingTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.tick()
+            }
+        }
+    }
+
+    // MARK: - Alarm checking
+
+    private func tick() {
+        guard firingAlarm == nil, let store else { return }
         let now = Calendar.current.dateComponents([.hour, .minute], from: Date())
-
         for alarm in store.alarms where alarm.isEnabled {
             let alarmComponents = Calendar.current.dateComponents([.hour, .minute], from: alarm.time)
             guard alarmComponents.hour == now.hour, alarmComponents.minute == now.minute else { continue }
-            let key = "\(alarm.id)-\(now.hour ?? 0)-\(now.minute ?? 0)"
-            guard !firedThisMinute.contains(key) else { continue }
-            fire(alarm: alarm, key: key)
+            fire(alarm: alarm)
             return
         }
     }
 
-    private func fire(alarm: Alarm, key: String) {
-        firedThisMinute.insert(key)
+    private func fire(alarm: Alarm) {
         firingAlarm = alarm
         play(sound: alarm.sound)
     }
 
+    // MARK: - Audio
+
     private func play(sound: AlarmSound) {
-        // Use a system sound file bundled with the app. Fallback to a beep via AudioServicesPlaySystemSound.
         let candidates: [(String, String)] = [
             (sound.rawValue, "mp3"),
             (sound.rawValue, "wav"),
@@ -71,7 +100,6 @@ final class AlarmScheduler {
             }
         }
 
-        // No audio file bundled — use a system alert sound as fallback.
         AudioServicesPlaySystemSound(1005)
     }
 
