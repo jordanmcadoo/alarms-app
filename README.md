@@ -1,6 +1,6 @@
-# Alarms App — Hatch Take-Home
+# Alarms App — Practice App
 
-A small SwiftUI alarm app built for the Hatch take-home.
+A small alarm app built with SwiftUI
 
 ## Setup
 
