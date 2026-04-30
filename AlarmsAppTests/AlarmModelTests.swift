@@ -22,25 +22,6 @@ final class AlarmModelTests: XCTestCase {
         XCTAssertFalse(first.isSaved)
     }
 
-    func testDecodingNonUUIDStringIDFallsBackToStableDerivedUUID() throws {
-        let json = """
-        {
-          "id": "backend-123",
-          "timestamp": "2026-04-29T12:30:00Z",
-          "sound": "party",
-          "recurring": "one-time"
-        }
-        """
-
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        let first = try decoder.decode(Alarm.self, from: Data(json.utf8))
-        let second = try decoder.decode(Alarm.self, from: Data(json.utf8))
-
-        XCTAssertEqual(first.id, second.id)
-    }
-
     func testDisplayHelpersExposeFormattedTimeAndSummary() {
         let calendar = Calendar(identifier: .gregorian)
         let alarm = Alarm(

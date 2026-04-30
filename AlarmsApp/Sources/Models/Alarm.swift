@@ -66,15 +66,9 @@ struct Alarm: Identifiable, Codable, Equatable, Hashable {
         time = try container.decode(Date.self, forKey: .time)
         sound = try container.decode(AlarmSound.self, forKey: .sound)
         recurring = try container.decode(Recurring.self, forKey: .recurring)
-        // The API has no id field — derive a stable UUID from the alarm's content
-        // so the same remote record always maps to the same id across fetches.
-        if let raw = try? container.decode(String.self, forKey: .id) {
-            id = UUID(uuidString: raw) ?? Alarm.stableUUID(from: raw)
-        } else if let intId = try? container.decode(Int.self, forKey: .id) {
-            id = Alarm.stableUUID(from: String(intId))
-        } else {
-            id = Alarm.stableUUID(from: "\(time.timeIntervalSinceReferenceDate)-\(sound.rawValue)-\(recurring.rawValue)")
-        }
+        // The backend does not provide a reliable id, so derive a deterministic
+        // UUID from the alarm's content to keep remote alarms identifiable.
+        id = Alarm.stableUUID(from: "\(time.timeIntervalSinceReferenceDate)-\(sound.rawValue)-\(recurring.rawValue)")
         isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
         isSaved = try container.decodeIfPresent(Bool.self, forKey: .isSaved) ?? false
     }
