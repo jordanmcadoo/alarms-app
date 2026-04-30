@@ -1,18 +1,24 @@
 import SwiftUI
 
 struct AlarmListView: View {
-    @Environment(AlarmStore.self) var store
+    let sortedAlarms: [Alarm]
+    let isLoading: Bool
+    let onToggle: (UUID) -> Void
 
     var body: some View {
         List {
-            ForEach(store.sortedAlarms) { alarm in
-                AlarmRowView(alarm: alarm)
+            ForEach(sortedAlarms) { alarm in
+                AlarmRowView(alarm: alarm, onToggle: { onToggle(alarm.id) })
             }
         }
         .listStyle(.plain)
         .overlay {
-            if store.alarms.isEmpty {
-                ContentUnavailableView("No Alarms", systemImage: "alarm", description: Text("Tap + to add an alarm."))
+            if sortedAlarms.isEmpty {
+                if isLoading {
+                    ProgressView("Loading alarms...")
+                } else {
+                    ContentUnavailableView("No Alarms", systemImage: "alarm", description: Text("Tap + to add an alarm."))
+                }
             }
         }
     }

@@ -2,13 +2,21 @@ import SwiftUI
 
 @main
 struct AlarmsApp: App {
-    @State private var store = AlarmStore()
-    @State private var scheduler = AlarmScheduler()
+    private let store: AlarmStore
+    private let scheduler: AlarmScheduler
+    private let contentViewModel: ContentViewModel
+
+    init() {
+        let store = AlarmStore()
+        let scheduler = AlarmScheduler()
+        self.store = store
+        self.scheduler = scheduler
+        self.contentViewModel = ContentViewModel(store: store)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(store)
+            ContentView(viewModel: contentViewModel)
                 .environment(scheduler)
                 .onAppear {
                     scheduler.start(watching: store)

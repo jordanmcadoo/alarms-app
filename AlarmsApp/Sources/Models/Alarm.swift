@@ -102,3 +102,13 @@ struct Alarm: Identifiable, Codable, Equatable, Hashable {
         ))
     }
 }
+
+extension Alarm {
+    var displayTime: String {
+        time.formatted(date: .omitted, time: .shortened)
+    }
+
+    var displayDetails: String {
+        "\(sound.displayName) · \(recurring.displayName)"
+    }
+}

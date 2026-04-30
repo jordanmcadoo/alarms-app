@@ -1,18 +1,14 @@
 import SwiftUI
 
 struct AlarmRowView: View {
-    @Environment(AlarmStore.self) var store
     let alarm: Alarm
-
-    private var timeString: String {
-        alarm.time.formatted(date: .omitted, time: .shortened)
-    }
+    let onToggle: () -> Void
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(timeString)
+                    Text(alarm.displayTime)
                         .font(.system(size: 40, weight: .thin, design: .default))
 
                     if alarm.isSaved {
@@ -21,7 +17,7 @@ struct AlarmRowView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                Text("\(alarm.sound.displayName) · \(alarm.recurring.displayName)")
+                Text(alarm.displayDetails)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -30,7 +26,7 @@ struct AlarmRowView: View {
 
             Toggle("", isOn: Binding(
                 get: { alarm.isEnabled },
-                set: { _ in store.toggleEnabled(id: alarm.id) }
+                set: { _ in onToggle() }
             ))
             .labelsHidden()
         }

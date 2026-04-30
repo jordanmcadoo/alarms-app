@@ -96,7 +96,10 @@ final class AlarmScheduler {
     }
 
     private func shouldFire(_ alarm: Alarm, at now: Date) -> Bool {
-        let calendar = Calendar.current
+        Self.shouldFire(alarm, at: now)
+    }
+
+    nonisolated static func shouldFire(_ alarm: Alarm, at now: Date, calendar: Calendar = .current) -> Bool {
         let nowComponents = calendar.dateComponents([.year, .month, .day, .weekday, .hour, .minute], from: now)
         let alarmComponents = calendar.dateComponents([.year, .month, .day, .weekday, .hour, .minute], from: alarm.time)
 

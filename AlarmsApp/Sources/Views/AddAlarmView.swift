@@ -1,25 +1,25 @@
 import SwiftUI
 
 struct AddAlarmView: View {
-    @Environment(AlarmStore.self) var store
     @Environment(\.dismiss) private var dismiss
+    @State private var viewModel: AddAlarmViewModel
 
-    @State private var selectedTime = Date()
-    @State private var selectedSound = AlarmSound.ocean
-    @State private var selectedRecurring = Recurring.oneTime
+    init(viewModel: AddAlarmViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("Time", selection: $selectedTime, displayedComponents: .hourAndMinute)
+                    DatePicker("Time", selection: $viewModel.selectedTime, displayedComponents: .hourAndMinute)
                         .datePickerStyle(.wheel)
                         .labelsHidden()
                         .frame(maxWidth: .infinity)
                 }
 
                 Section("Sound") {
-                    Picker("Sound", selection: $selectedSound) {
+                    Picker("Sound", selection: $viewModel.selectedSound) {
                         ForEach(AlarmSound.allCases, id: \.self) { sound in
                             Text(sound.displayName).tag(sound)
                         }
@@ -29,7 +29,7 @@ struct AddAlarmView: View {
                 }
 
                 Section("Repeat") {
-                    Picker("Repeat", selection: $selectedRecurring) {
+                    Picker("Repeat", selection: $viewModel.selectedRecurring) {
                         ForEach(Recurring.allCases, id: \.self) { r in
                             Text(r.displayName).tag(r)
                         }
@@ -46,13 +46,13 @@ struct AddAlarmView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
-                        let alarm = Alarm(time: selectedTime, sound: selectedSound, recurring: selectedRecurring)
-                        store.add(alarm)
+                        viewModel.save()
                         dismiss()
                     }
                     .fontWeight(.semibold)
                 }
             }
         }
+        .firingAlarmPresentation()
     }
 }

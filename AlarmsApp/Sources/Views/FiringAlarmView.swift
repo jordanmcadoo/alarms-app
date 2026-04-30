@@ -13,7 +13,7 @@ struct FiringAlarmView: View {
                 .foregroundStyle(.red)
                 .symbolEffect(.pulse)
 
-            Text(alarm.time.formatted(date: .omitted, time: .shortened))
+            Text(alarm.displayTime)
                 .font(.system(size: 64, weight: .thin))
 
             Text(alarm.sound.displayName)

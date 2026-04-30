@@ -27,3 +27,12 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.hatch.AlarmsApp
       DEVELOPMENT_TEAM: ""
+  AlarmsAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AlarmsAppTests
+    dependencies:
+      - target: AlarmsApp
+    settings:
+      GENERATE_INFOPLIST_FILE: YES

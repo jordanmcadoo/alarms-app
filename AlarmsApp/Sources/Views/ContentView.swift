@@ -1,56 +1,50 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(AlarmStore.self) var store
-    @Environment(AlarmScheduler.self) var scheduler
-    @State private var showAddAlarm = false
-    @State private var fetchErrorMessage: String? = nil
+    let viewModel: ContentViewModel
+
+    init(viewModel: ContentViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         NavigationStack {
-            AlarmListView()
+            AlarmListView(
+                sortedAlarms: viewModel.sortedAlarms,
+                isLoading: viewModel.isLoading,
+                onToggle: viewModel.toggleEnabled
+            )
                 .navigationTitle("Alarms")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            showAddAlarm = true
+                            viewModel.presentAddAlarm()
                         } label: {
                             Image(systemName: "plus")
                         }
                     }
                 }
-                .sheet(isPresented: $showAddAlarm) {
-                    AddAlarmView()
+                .sheet(isPresented: Binding(
+                    get: { viewModel.showAddAlarm },
+                    set: { if !$0 { viewModel.dismissAddAlarm() } }
+                )) {
+                    AddAlarmView(viewModel: viewModel.makeAddAlarmViewModel())
                 }
         }
         .task {
-            await loadRemoteAlarms()
+            await viewModel.loadRemoteAlarms()
         }
-        .sheet(item: Binding(
-            get: { scheduler.firingAlarm },
-            set: { _ in }
-        )) { alarm in
-            FiringAlarmView(alarm: alarm)
-        }
+        .firingAlarmPresentation()
         .alert(
             "Failed to Load Alarms",
             isPresented: Binding(
-                get: { fetchErrorMessage != nil },
-                set: { if !$0 { fetchErrorMessage = nil } }
+                get: { viewModel.isShowingError },
+                set: { if !$0 { viewModel.dismissError() } }
             )
         ) {
-            Button("OK") { fetchErrorMessage = nil }
+            Button("OK") { viewModel.dismissError() }
         } message: {
-            Text(fetchErrorMessage ?? "")
-        }
-    }
-
-    private func loadRemoteAlarms() async {
-        do {
-            let fetched = try await AlarmService.fetchAlarms()
-            store.replace(with: fetched)
-        } catch {
-            fetchErrorMessage = error.localizedDescription
+            Text(viewModel.errorMessage ?? "")
         }
     }
 }
