@@ -30,7 +30,7 @@ enum Recurring: String, Codable, CaseIterable {
     }
 }
 
-struct Alarm: Identifiable, Codable, Equatable, Hashable {
+struct Alarm: Identifiable, Codable, Hashable {
     let id: UUID
     var time: Date
     var sound: AlarmSound

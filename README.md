@@ -36,6 +36,8 @@ Alarm firing presentation follows the same idea: right now a reusable view modif
 
 I made a similar tradeoff with `AlarmService`: it stays as a small static fetch client for now, and `ContentViewModel` takes an injectable fetch closure for testability. If the app grew, I’d likely promote that into an injected service protocol.
 
+`AddAlarmView` also uses `@State(initialValue:)` to hold its view model. I think that pattern is reasonable here because the initializer stays lightweight and only assigns simple values; if the view model were doing heavier work at init time, I’d avoid that shape.
+
 ```mermaid
 flowchart LR
     A["AlarmsApp"]

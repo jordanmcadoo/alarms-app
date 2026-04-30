@@ -6,6 +6,7 @@ import Observation
 @Observable
 @MainActor
 final class AlarmScheduler {
+    /// The alarm currently being presented to the user, if any.
     private(set) var firingAlarm: Alarm? = nil
 
     private var timer: Timer?
@@ -13,9 +14,11 @@ final class AlarmScheduler {
     private var audioEngine: AVAudioEngine?
     private var sourceNode: AVAudioSourceNode?
     private weak var store: AlarmStore?
+    // If multiple alarms match in the same minute, present them one at a time.
     private var pendingAlarms: [Alarm] = []
     private var lastCheckedMinute: Date?
 
+    /// Starts foreground alarm monitoring against the shared store.
     func start(watching store: AlarmStore) {
         self.store = store
         pendingAlarms.removeAll()
@@ -23,6 +26,7 @@ final class AlarmScheduler {
         scheduleAlignedTimer()
     }
 
+    /// Stops monitoring and clears any active alarm/audio state.
     func stop() {
         timer?.invalidate()
         timer = nil
@@ -31,6 +35,7 @@ final class AlarmScheduler {
         firingAlarm = nil
     }
 
+    /// Dismisses the current alarm and advances to the next queued match, if any.
     func dismissFiringAlarm() {
         if let alarm = firingAlarm, alarm.recurring == .oneTime {
             store?.disable(id: alarm.id)
@@ -78,6 +83,8 @@ final class AlarmScheduler {
         guard let store else { return }
 
         let now = Date()
+        // Guard against duplicate checks within the same minute if `tick()` gets
+        // called more than once around the timer boundary.
         let currentMinute = Calendar.current.dateInterval(of: .minute, for: now)?.start ?? now
         guard currentMinute != lastCheckedMinute else { return }
         lastCheckedMinute = currentMinute
@@ -99,6 +106,7 @@ final class AlarmScheduler {
         Self.shouldFire(alarm, at: now)
     }
 
+    /// Pure firing logic used both at runtime and in unit tests.
     nonisolated static func shouldFire(_ alarm: Alarm, at now: Date, calendar: Calendar = .current) -> Bool {
         let nowComponents = calendar.dateComponents([.year, .month, .day, .weekday, .hour, .minute], from: now)
         let alarmComponents = calendar.dateComponents([.year, .month, .day, .weekday, .hour, .minute], from: alarm.time)
